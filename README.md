@@ -1,6 +1,7 @@
 # filecopy-sync
 
-一个通用的“增量同步”项目骨架：SQLServer(源) -> Nginx下载 -> WeDrive上传(目标) + MySQL落库(状态/映射)。
+微信企业微盘一个通用的“增量同步”项目：SQLServer(源) -> Nginx下载 -> WeDrive上传(目标) + MySQL落库(状态/映射)。
+该项目出现任何异常，会给指定的人发送企业微信消息
 
 ## Features
 - 双数据源：SQLServer + MySQL
