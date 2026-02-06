@@ -15,5 +15,8 @@
 3. 启动 app（web-application-type=none）
 
 ## TIPs
+cause of security,i remove all my real PWD and IP,
+so if you want copy my project and add your bussiness,
+pls do next TWO step:
 1. search all "XXX" in this project
 2. replace "XXX" to your local environments
