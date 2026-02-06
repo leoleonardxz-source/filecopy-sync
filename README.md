@@ -13,3 +13,7 @@
 1. 配置 application-prod.properties
 2. 启动 MySQL（docker-compose 可选）
 3. 启动 app（web-application-type=none）
+
+## TIPs
+1. search all "XXX" in this project
+2. replace "XXX" to your local environments
