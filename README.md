@@ -30,13 +30,13 @@ pls do next TWO step:
 ```mermaid
 flowchart TD
     A[定时任务触发]
-    A --> B[读取 lastSyncTime\n加回看窗口]
-    B --> C[SQLServer 增量分页查询\neffective_time 与 fid]
-    C --> D[MySQL 批量查询同步状态\nfile_id IN 列表 生成 Map]
+    A --> B[读取 lastSyncTime 加回看窗口]
+    B --> C[SQLServer 增量分页查询effective_time与fid]
+    C --> D[MySQL 批量查询同步状态file_id IN 列表 生成 Map]
     D --> E{是否需要同步}
     E -- 否 --> C
     E -- 是 --> F[下载文件到临时目录]
-    F --> G[确保微盘目录存在\nensureFolders]
+    F --> G[确保微盘目录存在ensureFolders]
     G --> H{文件大小判断}
     H -- 小于 10MB --> I[直传上传]
     H -- 大于等于 10MB --> J[2MB 分块上传]
