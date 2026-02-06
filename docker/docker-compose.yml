@@ -1,0 +1,73 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: filecopy-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      TZ: "Asia/Shanghai"
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
+    volumes:
+      - /opt/docker/filecopy/mysql:/var/lib/mysql
+      - /opt/docker/filecopy/init:/docker-entrypoint-initdb.d
+    networks:
+      - filecopy-net
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  filecopy-app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    image: filecopy-app:latest
+    container_name: filecopy-sync
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      TZ: "Asia/Shanghai"
+      SPRING_PROFILES_ACTIVE: prod
+
+      # ✅ exec 版：用 JAVA_TOOL_OPTIONS（JVM 自动读取），避免 sh -c 展开引号
+      JAVA_TOOL_OPTIONS: "${JAVA_TOOL_OPTIONS}"
+
+      # ✅ 应用日志目录（容器内）
+      LOGGING_FILE_PATH: "/data/logs"
+
+      # 其余敏感信息建议挪到 .env
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+      SQLSERVER_PASSWORD: "${SQLSERVER_PASSWORD}"
+      NGINX_PASSWORD: "${NGINX_PASSWORD}"
+      CLOUD_ZS_SECRET: "${CLOUD_ZS_SECRET}"
+
+    volumes:
+      - /opt/docker/filecopy/tmp_files:/data/tmp_files
+      - /opt/docker/filecopy/logs:/data/logs
+
+    networks:
+      - filecopy-net
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+networks:
+  filecopy-net:
+    name: filecopy-net
+    driver: bridge
